@@ -1,0 +1,22 @@
+"use client";
+
+import { useEffect, use } from "react";
+import { useRouter } from "next/navigation";
+import { useProjectStore } from "@/store/project-store";
+
+export default function ProjectRedirect({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = use(params);
+  const { projects, setActiveProject } = useProjectStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    const projectExists = projects.some((p) => p.id === projectId);
+    if (projectExists) {
+      setActiveProject(projectId);
+    } else {
+      router.replace("/");
+    }
+  }, [projects, projectId, setActiveProject, router]);
+
+  return null;
+}
