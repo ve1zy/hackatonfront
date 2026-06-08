@@ -6,10 +6,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useProjectStore } from "@/store/project-store";
 
 export default function ChatPage() {
-  const { projects, activeProjectId } = useProjectStore();
+  const { projects, activeProjectId, isLoading } = useProjectStore();
   const project = useMemo(() => projects.find((p) => p.id === activeProjectId), [projects, activeProjectId]);
 
-  if (!project) return <div>No project selected</div>;
+  if (isLoading || !project) return <div>Loading chat...</div>;
 
   return (
     <div>

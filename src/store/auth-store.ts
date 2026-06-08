@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface User {
   id: string;
@@ -21,7 +22,7 @@ interface AuthState {
   checkAuth: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>()((set, get) => ({
+export const useAuthStore = create<AuthState>()(persist((set) => ({
   user: null,
   isLoading: false,
 
@@ -44,4 +45,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   checkAuth: async () => {},
+}), {
+  name: 'auth-storage',
+  partialize: (state) => ({ user: state.user }),
 }));

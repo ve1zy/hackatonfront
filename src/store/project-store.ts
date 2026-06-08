@@ -257,10 +257,19 @@ fetchAndSetProject: async (id: string) => {
           calls: dashboard.calls?.map(mapCallFromApi) || [],
           messages: dashboard.chatMessages?.map(mapMessageFromApi) || [],
         };
-        set((state) => ({
-          projects: state.projects.map((p) => (p.id === id ? mappedProject : p)),
-          activeProjectId: id,
-        }));
+        set((state) => {
+          const existingIndex = state.projects.findIndex((p) => p.id === id);
+          if (existingIndex >= 0) {
+            return {
+              projects: state.projects.map((p) => (p.id === id ? mappedProject : p)),
+              activeProjectId: id,
+            };
+          }
+          return {
+            projects: [...state.projects, mappedProject],
+            activeProjectId: id,
+          };
+        });
       },
 
 addTask: async (task, createdById?: string) => {

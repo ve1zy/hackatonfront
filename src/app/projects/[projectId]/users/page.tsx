@@ -6,17 +6,17 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, User, Mail, Phone, Send, Plus, User as UserIcon } from "lucide-react";
+import { Trash2, User, Phone, Send, Plus } from "lucide-react";
 import { useProjectStore, UserRole } from "@/store/project-store";
 
 export default function UsersPage() {
-  const { projects, activeProjectId, addUser, removeUser } = useProjectStore();
+  const { projects, activeProjectId, addUser, removeUser, isLoading } = useProjectStore();
   const project = useMemo(() => projects.find((p) => p.id === activeProjectId), [projects, activeProjectId]);
   const [newEmail, setNewEmail] = useState("");
   const [newName, setNewName] = useState("");
   const [newRole, setNewRole] = useState<UserRole>("member");
 
-  if (!project) return <div>No project selected</div>;
+  if (isLoading || !project) return <div>Loading users...</div>;
 
   const handleAddUser = () => {
     if (newEmail.trim()) {

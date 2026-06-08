@@ -14,31 +14,31 @@ const tabs = [
 ];
 
 export function ProjectLayout({ children }: { children: React.ReactNode }) {
-  const { projects, activeProjectId, setActiveProject } = useProjectStore();
+  const { projects, activeProjectId, setActiveProject, isLoading } = useProjectStore();
   const params = useParams();
   const pathname = usePathname();
 
-  // In App Router, params may be a Promise in some versions
-  const projectId = typeof params?.projectId === 'string' ? params.projectId : String(params?.projectId || '');
+  // In Next 16 App Router, params.projectId can be string or string[]
+  const projectId = params?.projectId 
+    ? (typeof params.projectId === 'string' ? params.projectId : (params.projectId as string[])[0] || '')
+    : '';
 
   useEffect(() => {
-    if (!activeProjectId && projectId) {
+    if (projectId) {
       setActiveProject(projectId);
     }
-  }, [projectId, activeProjectId, setActiveProject]);
+  }, [projectId, setActiveProject]);
 
   const project = projects.find((p) => p.id === activeProjectId || p.id === projectId);
 
-  if (!project || !projectId) {
-    return <div className="h-screen w-full">{children}</div>;
-  }
-
   return (
     <div className="flex h-screen flex-col">
-      <header className="border-b bg-background px-4 py-3">
-        <h1 className="text-xl font-semibold">{project.name}</h1>
-        <p className="text-sm text-muted-foreground">{project.description}</p>
-      </header>
+      {project && (
+        <header className="border-b bg-background px-4 py-3">
+          <h1 className="text-xl font-semibold">{project.name}</h1>
+          <p className="text-sm text-muted-foreground">{project.description}</p>
+        </header>
+      )}
 
       <nav className="border-b bg-muted/40 px-4">
         <div className="flex gap-1">

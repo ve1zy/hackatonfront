@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Edit, Trash2, Calendar, Tag, GripVertical } from "lucide-react";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useProjectStore, TaskPriority, ColumnType } from "@/store/project-store";
 import { useAuthStore } from "@/store/auth-store";
 import { DragDropContext, DropResult, Droppable, Draggable, DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
@@ -18,23 +18,18 @@ const COLUMNS: { id: ColumnType; title: string; color: string }[] = [
   { id: "done", title: "Done", color: "bg-green-100 dark:bg-green-900/50" },
 ];
 
-export default function TasksPage({ params }: { params: { projectId: string } }) {
-  const { projectId } = params;
-  const { projects, activeProjectId, setActiveProject, addTask, deleteTask, updateTask, moveTask } = useProjectStore();
+export default function TasksPage() {
+  const { projects, activeProjectId, addTask, deleteTask, updateTask, moveTask, isLoading } = useProjectStore();
   const { user } = useAuthStore();
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setActiveProject(projectId);
-  }, [projectId, setActiveProject]);
-
-  const project = useMemo(() => projects.find((p) => p.id === activeProjectId), [projects, activeProjectId]);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [assigneeId, setAssigneeId] = useState<string>("unassigned");
   const [dueDate, setDueDate] = useState("");
   const [tags, setTags] = useState("");
+
+  const project = useMemo(() => projects.find((p) => p.id === activeProjectId), [projects, activeProjectId]);
 
   const resetForm = useCallback(() => {
     setNewTitle("");
@@ -90,7 +85,7 @@ export default function TasksPage({ params }: { params: { projectId: string } })
     return result;
   }, [project]);
 
-  if (!project) return <div>No project selected</div>;
+  if (isLoading || !project) return <div>Loading tasks...</div>;
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
