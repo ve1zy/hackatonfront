@@ -2,13 +2,15 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Bell } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Bell, Clock, Users } from "lucide-react";
 import { useState } from "react";
 
 export default function SettingsPage() {
   const [notifyEmail, setNotifyEmail] = useState(true);
   const [notifyChat, setNotifyChat] = useState(true);
   const [remindHours, setRemindHours] = useState("24");
+  const [notifyTime, setNotifyTime] = useState("09:00");
 
   return (
     <div>
@@ -33,18 +35,44 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="text-sm mb-2 block">Remind before due</label>
-              <select
-                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800"
-                value={remindHours}
-                onChange={(e) => setRemindHours(e.target.value)}
-              >
-                <option value="1">1 hour</option>
-                <option value="6">6 hours</option>
-                <option value="12">12 hours</option>
-                <option value="24">24 hours</option>
-                <option value="48">48 hours</option>
-              </select>
+              <Select value={remindHours} onValueChange={setRemindHours}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 hour</SelectItem>
+                  <SelectItem value="6">6 hours</SelectItem>
+                  <SelectItem value="12">12 hours</SelectItem>
+                  <SelectItem value="24">24 hours</SelectItem>
+                  <SelectItem value="48">48 hours</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+            <div>
+              <label className="text-sm mb-2 block flex items-center gap-1">
+                <Clock className="h-4 w-4" /> Daily digest time
+              </label>
+              <input
+                type="time"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={notifyTime}
+                onChange={(e) => setNotifyTime(e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" /> Administration
+            </CardTitle>
+            <CardDescription>Manage project administrators</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Admin users can manage members and configure integrations.
+            </p>
           </CardContent>
         </Card>
       </div>

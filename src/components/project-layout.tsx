@@ -3,7 +3,7 @@
 import { usePathname, useParams } from "next/navigation";
 import { useProjectStore } from "@/store/project-store";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const tabs = [
   { id: "tasks", label: "Tasks", href: (projectId: string) => `/projects/${projectId}/tasks` },
@@ -17,23 +17,17 @@ export function ProjectLayout({ children }: { children: React.ReactNode }) {
   const { projects, activeProjectId, setActiveProject } = useProjectStore();
   const params = useParams();
   const pathname = usePathname();
-  const [projectId, setProjectId] = useState<string>("");
 
-  useEffect(() => {
-    const resolveParams = async () => {
-      const resolvedParams = await params;
-      setProjectId(resolvedParams.projectId as string);
-    };
-    resolveParams();
-  }, [params]);
-
-  const project = projects.find((p) => p.id === activeProjectId || p.id === projectId);
+  // In App Router, params may be a Promise in some versions
+  const projectId = typeof params?.projectId === 'string' ? params.projectId : String(params?.projectId || '');
 
   useEffect(() => {
     if (!activeProjectId && projectId) {
       setActiveProject(projectId);
     }
   }, [projectId, activeProjectId, setActiveProject]);
+
+  const project = projects.find((p) => p.id === activeProjectId || p.id === projectId);
 
   if (!project || !projectId) {
     return <div className="h-screen w-full">{children}</div>;
